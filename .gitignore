@@ -1,0 +1,24 @@
+
+# Dependências
+node_modules/
+
+# Logs
+npm-debug.log*
+*.log
+
+# Variáveis de ambiente
+.env
+.env.local
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Relatórios
+mochawesome-report/
+cypress/reports/
+
+# Evidências do Cypress
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/

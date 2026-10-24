@@ -1,0 +1,28 @@
+{
+  "name": "automacaoweb-projetofinal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  
+"scripts": {
+  "test": "npm run test:e2e",
+  "test:e2e": "cypress run --browser chrome",
+  "report:clean": "rimraf cypress/reports",
+  "report:merge": "mochawesome-merge \"cypress/reports/mochawesome/*.json\" -o cypress/reports/resultado-final.json",
+  "report:html": "marge cypress/reports/resultado-final.json --reportDir cypress/reports --reportFilename relatorio-final --inline",
+  "report": "npm run report:merge && npm run report:html",
+  "test:report": "npm run report:clean && npm run test:e2e && npm run report"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@faker-js/faker": "^10.6.0",
+    "cypress": "^15.21.1",
+    "mochawesome": "^8.1.1",
+    "mochawesome-merge": "^5.1.1",
+    "mochawesome-report-generator": "^6.3.2",
+    "rimraf": "^6.1.3"
+  }
+}

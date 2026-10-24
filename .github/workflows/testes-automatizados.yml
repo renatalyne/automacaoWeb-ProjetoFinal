@@ -1,0 +1,47 @@
+
+name: Testes Automatizados - Cypress
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar código do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Executar testes Cypress
+        run: npm run test:e2e
+
+      - name: Gerar relatório HTML
+        if: always()
+        run: |
+          if [ -d cypress/reports/mochawesome ]; then
+            npm run report
+          fi
+
+      - name: Publicar relatório e evidências
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-testes-cypress
+          path: |
+            cypress/reports/
+            cypress/screenshots/
+          if-no-files-found: warn
+          retention-days: 30
