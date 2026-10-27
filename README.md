@@ -70,6 +70,7 @@ Foram implementados os seguintes cenários:
 ## 4. Estrutura do projeto
 
 ```text
+
 automacaoWeb-ProjetoFinal/
 ├── .github/
 │   └── workflows/
@@ -84,11 +85,17 @@ automacaoWeb-ProjetoFinal/
 │   ├── fixtures/
 │   │   └── example.json
 │   ├── support/
-│   │   ├── automation-exercise.js
+│   │   ├── autenticacao.js
+│   │   ├── cadastro.js
+│   │   ├── checkout.js
 │   │   ├── commands.js
 │   │   ├── dados-usuario.js
-│   │   └── e2e.js
-│   └── reports/             # Gerada durante a execução
+│   │   ├── e2e.js
+│   │   ├── navegacao.js
+│   │   ├── newsletter.js
+│   │   └── produtos.js
+│   └── reports/
+│       └── index.html
 ├── .gitignore
 ├── cypress.config.js
 ├── package.json
@@ -98,31 +105,41 @@ automacaoWeb-ProjetoFinal/
 
 ## 5. Organização e reutilização de código
 
-O projeto foi estruturado para separar os cenários de teste das funcionalidades reutilizáveis.
+O projeto foi estruturado para separar os cenários de teste das funcionalidades reutilizáveis, facilitando a manutenção, a leitura e a evolução da automação.
 
 **`cypress/e2e/`**
 
-Contém os arquivos de testes organizados por funcionalidade.
+Contém os arquivos de testes organizados por funcionalidade: autenticação, cadastro, checkout, newsletter e produtos.
 
-**`cypress/support/automation-exercise.js`**
+**`cypress/support/navegacao.js`**
 
-Centraliza funções reutilizáveis, como:
+Centraliza o acesso e as validações iniciais da aplicação.
 
-- Acessar a página inicial.
-- Iniciar o cadastro.
-- Preencher os dados cadastrais.
-- Finalizar o cadastro.
-- Excluir a conta.
-- Realizar login.
-- Realizar logout.
+**`cypress/support/autenticacao.js`**
+
+Contém funções reutilizáveis para realizar login válido, login inválido e logout.
+
+**`cypress/support/cadastro.js`**
+
+Centraliza as etapas de cadastro de usuários e exclusão de contas.
+
+**`cypress/support/produtos.js`**
+
+Contém funções para acessar a página de produtos e adicionar produtos ao carrinho.
+
+**`cypress/support/checkout.js`**
+
+Organiza as etapas de checkout, incluindo validação de endereço, revisão do pedido, preenchimento dos dados de pagamento e confirmação da compra.
+
+**`cypress/support/newsletter.js`**
+
+Centraliza as ações e validações relacionadas à assinatura da newsletter.
 
 **`cypress/support/dados-usuario.js`**
 
 Utiliza a biblioteca Faker para gerar dados dinâmicos de usuários, reduzindo a dependência de dados fixos.
 
-**`cypress/e2e/checkout.cy.js`**
-
-Contém uma função reutilizável para finalizar pedidos, utilizada nos cenários TC15 e TC16.
+Essa organização permite reutilizar funcionalidades entre diferentes cenários e reduz a duplicação de código.
 
 ## 6. Pré-requisitos
 
@@ -133,11 +150,24 @@ Para executar o projeto localmente, é necessário ter instalado:
 - Google Chrome.
 
 ## 7. Instalação
+### Configuração da variável de ambiente
+
+Os testes que envolvem cadastro e autenticação utilizam uma senha de teste configurada por variável de ambiente.
+
+Para executar localmente, crie um arquivo `.env` na raiz do projeto e configure:
+
+```env
+CYPRESS_SENHA_TESTE=SuaSenhaDeTeste123
+```
+
+O arquivo `.env` não deve ser enviado ao GitHub, pois contém configurações locais.
+
+No GitHub Actions, a senha é disponibilizada por meio do secret `CYPRESS_SENHA_TESTE`.
 
 Clone o repositório:
 
 ```bash
-git clone https://github.com/SEU-USUARIO/automacaoWeb-ProjetoFinal.git
+git clone https://github.com/renatalyne/automacaoWeb-ProjetoFinal.git
 ```
 
 Acesse a pasta:
@@ -201,7 +231,7 @@ npm run report
 **Localização do relatório final:**
 
 ```text
-cypress/reports/relatorio-final.html
+cypress/reports/index.html
 ```
 
 O relatório permite consultar:
@@ -238,7 +268,7 @@ A pipeline está preparada para executar os testes automaticamente nas seguintes
 
 Os artefatos são configurados para permanecer disponíveis por até 30 dias.
 
-**Status:** workflow configurado localmente, aguardando validação da primeira execução no GitHub Actions.
+**Status:** pipeline executado com sucesso no GitHub Actions, na branch develop, após o envio do commit 259e897
 
 ## 11. Resultado da execução local
 
