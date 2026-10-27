@@ -1,35 +1,45 @@
+
 require('dotenv').config();
-const { defineConfig } = require("cypress");
+const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
   allowCypressEnv: false,
-  //adicionando tempo de espera para os comandos do Cypress
+
+  // Tempo de espera para os comandos do Cypress
   defaultCommandTimeout: 10000,
   pageLoadTimeout: 60000,
+
   screenshotOnRunFailure: true,
   screenshotsFolder: 'cypress/screenshots',
-  reporter: "mochawesome",
+
+  // Relatório exigido no trabalho final
+  reporter: 'cypress-mochawesome-reporter',
 
   reporterOptions: {
-    reportDir: "cypress/reports/mochawesome",
-    overwrite: false,
-    html: false,
-    json: true
+    reportDir: 'cypress/reports',
+    charts: true,
+    reportPageTitle: 'Relatório de Testes Automatizados - Cypress',
+    embeddedScreenshots: true,
+    inlineAssets: true,
   },
 
- e2e: {
-  baseUrl: 'https://automationexercise.com',
+  e2e: {
+    baseUrl: 'https://automationexercise.com',
 
-  setupNodeEvents(on, config) {
-    config.env.SENHA_TESTE = process.env.CYPRESS_SENHA_TESTE;
+    setupNodeEvents(on, config) {
+      // Registrar o plugin do relatório
+      require('cypress-mochawesome-reporter/plugin')(on);
 
-    if (!config.env.SENHA_TESTE) {
-      throw new Error(
-        'A variável CYPRESS_SENHA_TESTE não foi configurada no arquivo .env'
-      );
-    }
+      // Recuperar a senha da variável de ambiente
+      config.env.SENHA_TESTE = process.env.CYPRESS_SENHA_TESTE;
 
-    return config;
+      if (!config.env.SENHA_TESTE) {
+        throw new Error(
+          'A variável CYPRESS_SENHA_TESTE não foi configurada no arquivo .env'
+        );
+      }
+
+      return config;
+    },
   },
-},
 });

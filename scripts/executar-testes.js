@@ -1,3 +1,4 @@
+
 const { spawnSync } = require('node:child_process');
 
 function executar(script) {
@@ -17,13 +18,16 @@ function executar(script) {
   return resultado.status ?? 1;
 }
 
+// Limpar relatórios anteriores
 const limpeza = executar('report:clean');
 
 if (limpeza !== 0) {
   process.exit(limpeza);
 }
 
+// Executar testes Cypress
+// O cypress-mochawesome-reporter gera o HTML automaticamente
 const resultadoTestes = executar('test:e2e');
-const resultadoRelatorio = executar('report');
 
-process.exit(resultadoTestes !== 0 ? resultadoTestes : resultadoRelatorio);
+// Preservar o resultado da execução dos testes
+process.exit(resultadoTestes);

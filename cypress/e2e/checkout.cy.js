@@ -24,7 +24,7 @@ import {
 // TC15 - Realizar pedido após cadastrar usuário
 describe('TC15 - Realizar pedido após cadastrar usuário.', () => {
 
-  it('Deve cadastrar usuário e adicionar produto ao carrinho', () => {
+  it('Deve cadastrar um usuário, adicionar um produto ao carrinho e concluir o pedido', () => {
 
     cy.env(['SENHA_TESTE']).then(({ SENHA_TESTE }) => {
       const usuario = criarUsuario(SENHA_TESTE);
@@ -52,8 +52,7 @@ describe('TC15 - Realizar pedido após cadastrar usuário.', () => {
 // TC16 - Realizar pedido após fazer login
 describe('TC16 - Realizar pedido após fazer login', () => {
 
-  it('Deve realizar login com usuário cadastrado antes da compra', () => {
-
+  it('Deve autenticar um usuário existente, adicionar um produto ao carrinho e concluir o pedido', () => {
     cy.env(['SENHA_TESTE']).then(({ SENHA_TESTE }) => {
       const usuario = criarUsuario(SENHA_TESTE);
 

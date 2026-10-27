@@ -13,7 +13,7 @@ import {
 
 describe('TC01 - Cadastro de usuário', () => {
 
-  it('Deve cadastrar e excluir um usuário com sucesso', () => {
+  it('Deve cadastrar um novo usuário e excluir a conta com sucesso', () => {
 
     cy.env(['SENHA_TESTE']).then(({ SENHA_TESTE }) => {
       const usuario = criarUsuario(SENHA_TESTE);

@@ -35,7 +35,7 @@ describe('TC08 - Visualizar detalhes dos produtos', () => {
 
 describe('TC09 - Pesquisar produtos', () => {
 
-  it('Deve pesquisar produtos e apresentar os resultados', () => {
+  it('Deve pesquisar um produto e apresentar os resultados correspondentes', () => {
 
    const produto = 'Top';
 
