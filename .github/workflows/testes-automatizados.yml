@@ -27,6 +27,8 @@ jobs:
 
       - name: Executar testes Cypress
         run: npm run test:e2e
+        env:
+          CYPRESS_SENHA_TESTE: ${{ secrets.CYPRESS_SENHA_TESTE }}
 
       - name: Gerar relatório HTML
         if: always()
