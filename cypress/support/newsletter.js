@@ -1,7 +1,13 @@
-export function assinarNewsletter(email) {
 
+const seletores = {
+  rodape: '#footer',
+  campoEmail: '#susbscribe_email',
+  botaoAssinar: '#subscribe'
+};
+
+export function assinarNewsletter(email) {
   // Localizar a seção de assinatura
-  cy.get('#footer')
+  cy.get(seletores.rodape)
     .scrollIntoView();
 
   // Validar o título
@@ -9,12 +15,12 @@ export function assinarNewsletter(email) {
     .should('be.visible');
 
   // Preencher o e-mail
-  cy.get('#susbscribe_email')
+  cy.get(seletores.campoEmail)
     .should('be.visible')
     .type(email);
 
   // Confirmar assinatura
-  cy.get('#subscribe')
+  cy.get(seletores.botaoAssinar)
     .click();
 
   // Validar mensagem de sucesso

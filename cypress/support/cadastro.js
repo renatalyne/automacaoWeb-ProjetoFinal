@@ -1,3 +1,33 @@
+
+const seletores = {
+  nomeCadastro: '[data-qa="signup-name"]',
+  emailCadastro: '[data-qa="signup-email"]',
+  botaoCadastro: '[data-qa="signup-button"]',
+
+  generoFeminino: '#id_gender2',
+  senha: '[data-qa="password"]',
+  diaNascimento: '[data-qa="days"]',
+  mesNascimento: '[data-qa="months"]',
+  anoNascimento: '[data-qa="years"]',
+
+  newsletter: '#newsletter',
+  ofertas: '#optin',
+
+  nome: '[data-qa="first_name"]',
+  sobrenome: '[data-qa="last_name"]',
+  empresa: '[data-qa="company"]',
+  endereco: '[data-qa="address"]',
+  complemento: '[data-qa="address2"]',
+  pais: '[data-qa="country"]',
+  estado: '[data-qa="state"]',
+  cidade: '[data-qa="city"]',
+  cep: '[data-qa="zipcode"]',
+  telefone: '[data-qa="mobile_number"]',
+
+  botaoCriarConta: '[data-qa="create-account"]',
+  botaoContinuar: '[data-qa="continue-button"]'
+};
+
 export function iniciarCadastro(usuario) {
   cy.contains('a', 'Signup / Login')
     .should('be.visible')
@@ -6,13 +36,13 @@ export function iniciarCadastro(usuario) {
   cy.contains('h2', 'New User Signup!')
     .should('be.visible');
 
-  cy.get('[data-qa="signup-name"]')
+  cy.get(seletores.nomeCadastro)
     .type(usuario.nomeCompleto);
 
-  cy.get('[data-qa="signup-email"]')
+  cy.get(seletores.emailCadastro)
     .type(usuario.email);
 
-  cy.get('[data-qa="signup-button"]')
+  cy.get(seletores.botaoCadastro)
     .click();
 
   cy.contains('b', 'Enter Account Information')
@@ -20,43 +50,44 @@ export function iniciarCadastro(usuario) {
 }
 
 export function preencherDadosCadastro(usuario) {
-  cy.get('#id_gender2').check();
+  cy.get(seletores.generoFeminino).check();
 
-  cy.get('[data-qa="password"]')
+  cy.get(seletores.senha)
     .type(usuario.senha, { log: false });
 
-  cy.get('[data-qa="days"]').select('15');
-  cy.get('[data-qa="months"]').select('May');
-  cy.get('[data-qa="years"]').select('1995');
+  cy.get(seletores.diaNascimento).select('15');
+  cy.get(seletores.mesNascimento).select('May');
+  cy.get(seletores.anoNascimento).select('1995');
 
-  cy.get('#newsletter').check();
-  cy.get('#optin').check();
+  cy.get(seletores.newsletter).check();
+  cy.get(seletores.ofertas).check();
 
-  cy.get('[data-qa="first_name"]').type(usuario.nome);
-  cy.get('[data-qa="last_name"]').type(usuario.sobrenome);
+  cy.get(seletores.nome).type(usuario.nome);
+  cy.get(seletores.sobrenome).type(usuario.sobrenome);
 
-  cy.get('[data-qa="company"]').type(usuario.empresa);
-  cy.get('[data-qa="address"]').type(usuario.endereco);
-  cy.get('[data-qa="address2"]').type(usuario.complemento);
+  cy.get(seletores.empresa).type(usuario.empresa);
+  cy.get(seletores.endereco).type(usuario.endereco);
+  cy.get(seletores.complemento).type(usuario.complemento);
 
-  cy.get('[data-qa="country"]').select(usuario.pais);
-  cy.get('[data-qa="state"]').type(usuario.estado);
-  cy.get('[data-qa="city"]').type(usuario.cidade);
-  cy.get('[data-qa="zipcode"]').type(usuario.cep);
-  cy.get('[data-qa="mobile_number"]').type(usuario.telefone);
+  cy.get(seletores.pais).select(usuario.pais);
+  cy.get(seletores.estado).type(usuario.estado);
+  cy.get(seletores.cidade).type(usuario.cidade);
+  cy.get(seletores.cep).type(usuario.cep);
+  cy.get(seletores.telefone).type(usuario.telefone);
 }
 
 export function finalizarCadastro(usuario) {
-  cy.get('[data-qa="create-account"]').click();
+  cy.get(seletores.botaoCriarConta).click();
 
   cy.contains('b', 'Account Created!')
     .should('be.visible');
 
-  cy.get('[data-qa="continue-button"]').click();
+  cy.get(seletores.botaoContinuar).click();
 
   cy.contains('a', `Logged in as ${usuario.nomeCompleto}`)
     .should('be.visible');
 }
+
 export function cadastrarUsuario(usuario) {
   iniciarCadastro(usuario);
   preencherDadosCadastro(usuario);
@@ -69,5 +100,5 @@ export function excluirConta() {
   cy.contains('b', 'Account Deleted!')
     .should('be.visible');
 
-  cy.get('[data-qa="continue-button"]').click();
+  cy.get(seletores.botaoContinuar).click();
 }

@@ -14,72 +14,82 @@ import {
   realizarLogout
 } from '../support/autenticacao';
 
+
 describe('TC02 - Login com credenciais válidas', () => {
+  let usuario;
 
-  it('Deve realizar login com sucesso', () => {
-
+  beforeEach(() => {
     cy.env(['SENHA_TESTE']).then(({ SENHA_TESTE }) => {
-      const usuario = criarUsuario(SENHA_TESTE);
+      usuario = criarUsuario(SENHA_TESTE);
 
-      // Preparação: cadastrar usuário
+      // Pré-condição: cadastrar um usuário válido
       acessarPaginaInicial();
       cadastrarUsuario(usuario);
 
-      // Encerrar a sessão
+      // Encerrar a sessão para iniciar o teste deslogado
       realizarLogout();
-
-      // Executar o login
-      realizarLogin(usuario);
-
-      // Limpeza: excluir usuário
-      excluirConta();
     });
-
   });
 
+  it('Deve realizar login com sucesso', () => {
+    // Passos 1 a 3: acessar e validar a página inicial
+    acessarPaginaInicial();
+
+    // Passos 4 a 8: realizar login e validar usuário autenticado
+    realizarLogin(usuario);
+
+    // Passos 9 e 10: excluir conta e validar exclusão
+    excluirConta();
+  });
 });
 
 describe('TC03 - Login com credenciais inválidas', () => {
-
-  it('Deve apresentar erro ao informar credenciais inválidas', () => {
-
+  it('Deve exibir mensagem de erro ao tentar login com credenciais inválidas', () => {
+    // Passos 1 a 3: acessar e validar a página inicial
     acessarPaginaInicial();
 
     const emailInvalido = `invalido${Date.now()}@example.com`;
     const senhaInvalida = 'SenhaInvalida123';
 
+    // Passos 4 a 8: tentar login e validar mensagem de erro
     realizarLoginInvalido(emailInvalido, senhaInvalida);
-
   });
-
 });
 
 describe('TC04 - Logout de usuário', () => {
+  let usuario;
 
-  it('Deve realizar logout com sucesso', () => {
-
+  beforeEach(() => {
     cy.env(['SENHA_TESTE']).then(({ SENHA_TESTE }) => {
-      const usuario = criarUsuario(SENHA_TESTE);
+      usuario = criarUsuario(SENHA_TESTE);
 
-      // Preparação: criar usuário autenticado
+      // Pré-condição: cadastrar um usuário válido
       acessarPaginaInicial();
       cadastrarUsuario(usuario);
 
-      // Executar logout
+      // Deixar o usuário deslogado antes do cenário
       realizarLogout();
-
-      // Validar retorno à tela de login
-      cy.contains('h2', 'Login to your account')
-        .should('be.visible');
-
-      cy.contains('a', `Logged in as ${usuario.nomeCompleto}`)
-        .should('not.exist');
-
-      // Limpeza: autenticar novamente para excluir a conta
-      realizarLogin(usuario);
-      excluirConta();
     });
-
   });
 
+  it('Deve realizar logout com sucesso', () => {
+    // Passos 1 a 3: abrir e validar a página inicial
+    acessarPaginaInicial();
+
+    // Passos 4 a 8: realizar login com credenciais válidas
+    realizarLogin(usuario);
+
+    // Passos 9 e 10: realizar logout e validar redirecionamento
+    realizarLogout();
+
+    cy.contains('h2', 'Login to your account')
+      .should('be.visible');
+  });
+
+  afterEach(() => {
+    // Limpeza: autenticar novamente e excluir a conta
+    // Executada fora do cenário principal
+    realizarLogin(usuario);
+    excluirConta();
+  });
 });

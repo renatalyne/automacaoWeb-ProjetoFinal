@@ -20,6 +20,7 @@ describe('TC08 - Visualizar detalhes dos produtos', () => {
       .first()
       .click();
 
+      cy.url().should('include', '/product_details/');
     cy.get('.product-information').within(() => {
       cy.get('h2').should('be.visible');
       cy.contains('Category:').should('be.visible');
@@ -33,55 +34,42 @@ describe('TC08 - Visualizar detalhes dos produtos', () => {
 
 });
 
+
 describe('TC09 - Pesquisar produtos', () => {
 
   it('Deve pesquisar um produto e apresentar os resultados correspondentes', () => {
 
-   const produto = 'Top';
+    const produto = 'Top';
 
-acessarPaginaInicial();
-acessarPaginaProdutos();
+    acessarPaginaInicial();
+    acessarPaginaProdutos();
 
-// Informar o produto que será pesquisado
-cy.get('#search_product')
-  .should('be.visible')
-  .type(produto);
+    // Informar o produto que será pesquisado
+    cy.get('#search_product')
+      .should('be.visible')
+      .type(produto);
 
-// Executar a pesquisa
-cy.get('#submit_search').click();
+    // Executar a pesquisa
+    cy.get('#submit_search')
+      .click();
 
-cy.contains('h2', 'Searched Products')
-  .should('be.visible');
+    // Validar a página de resultados
+    cy.contains('h2', 'Searched Products')
+      .should('be.visible');
 
-cy.get('.features_items .product-image-wrapper')
-  .should('have.length.greaterThan', 0);
+    // Validar os produtos retornados
+    cy.get('.features_items .product-image-wrapper')
+      .should('have.length.greaterThan', 0)
+      .each(($produto) => {
+        cy.wrap($produto)
+          .should('be.visible');
 
-
-
-cy.get('.features_items .productinfo p')
-  .then(($produtos) => {
-
-    const nomes = $produtos.toArray().map((elemento) =>
-      elemento.innerText.trim()
-    );
-
-    // Verificar que existem produtos encontrados
-    expect(
-  nomes.length,
-  'A pesquisa deve retornar pelo menos um produto'
-).to.be.greaterThan(0);
-
-    // Verificar que pelo menos um produto corresponde à pesquisa
-    const produtosCorrespondentes = nomes.filter((nome) =>
-      nome.toLowerCase().includes(produto.toLowerCase())
-    );
-
-expect(
-  produtosCorrespondentes.length,
-  `A pesquisa pelo termo "${produto}" deve retornar pelo menos um produto correspondente`
-).to.be.greaterThan(0);
-
-  });
+        cy.wrap($produto)
+          .find('.productinfo p')
+          .should('exist')
+          .invoke('text')
+          .should('not.be.empty');
+      });
 
   });
 

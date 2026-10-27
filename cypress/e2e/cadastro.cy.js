@@ -4,12 +4,10 @@ import { criarUsuario } from '../support/dados-usuario';
 import { acessarPaginaInicial } from '../support/navegacao';
 
 import {
-  iniciarCadastro,
-  preencherDadosCadastro,
-  finalizarCadastro,
   cadastrarUsuario,
   excluirConta
 } from '../support/cadastro';
+import { realizarLogout } from '../support/autenticacao';
 
 describe('TC01 - Cadastro de usuário', () => {
 
@@ -29,42 +27,46 @@ describe('TC01 - Cadastro de usuário', () => {
 
 });
 
+
 describe('TC05 - Cadastro com e-mail existente', () => {
+  let usuario;
 
-  it('Deve impedir cadastro com e-mail já registrado', () => {
-
+  beforeEach(() => {
     cy.env(['SENHA_TESTE']).then(({ SENHA_TESTE }) => {
-      const usuario = criarUsuario(SENHA_TESTE);
+      usuario = criarUsuario(SENHA_TESTE);
 
-      // Preparação: cadastrar o usuário
+      // Pré-condição: cadastrar um usuário existente
       acessarPaginaInicial();
-      iniciarCadastro(usuario);
-      preencherDadosCadastro(usuario);
-      finalizarCadastro(usuario);
-
-      // Encerrar a sessão
-      cy.contains('a', 'Logout')
-        .should('be.visible')
-        .click();
-
-      // Tentar cadastrar novamente com o mesmo e-mail
-      cy.contains('h2', 'New User Signup!')
-        .should('be.visible');
-
-      cy.get('[data-qa="signup-name"]')
-        .type(usuario.nomeCompleto);
-
-      cy.get('[data-qa="signup-email"]')
-        .type(usuario.email);
-
-      cy.get('[data-qa="signup-button"]')
-        .click();
-
-      // Validar mensagem de e-mail já cadastrado
-      cy.contains('Email Address already exist!')
-        .should('be.visible');
+      cadastrarUsuario(usuario);
+      // Encerrar a sessão para iniciar o teste deslogado
+      realizarLogout();
     });
-
   });
 
+  it('Deve impedir cadastro com e-mail já registrado', () => {
+    // Passos 1 a 3: acessar e validar a página inicial
+    acessarPaginaInicial();
+
+    // Passos 4 e 5: acessar a tela de cadastro
+    cy.contains('a', 'Signup / Login')
+      .should('be.visible')
+      .click();
+
+    cy.contains('h2', 'New User Signup!')
+      .should('be.visible');
+
+    // Passos 6 e 7: tentar cadastrar e-mail existente
+    cy.get('[data-qa="signup-name"]')
+      .type(usuario.nomeCompleto);
+
+    cy.get('[data-qa="signup-email"]')
+      .type(usuario.email);
+
+    cy.get('[data-qa="signup-button"]')
+      .click();
+
+    // Passo 8: validar mensagem de erro
+    cy.contains('Email Address already exist!')
+      .should('be.visible');
+  });
 });
