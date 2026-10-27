@@ -1,8 +1,3 @@
-
-export function acessarPaginaInicial() {
-  cy.visit('https://automationexercise.com');
-}
-
 export function iniciarCadastro(usuario) {
   cy.contains('a', 'Signup / Login')
     .should('be.visible')
@@ -62,6 +57,11 @@ export function finalizarCadastro(usuario) {
   cy.contains('a', `Logged in as ${usuario.nomeCompleto}`)
     .should('be.visible');
 }
+export function cadastrarUsuario(usuario) {
+  iniciarCadastro(usuario);
+  preencherDadosCadastro(usuario);
+  finalizarCadastro(usuario);
+}
 
 export function excluirConta() {
   cy.contains('a', 'Delete Account').click();
@@ -70,33 +70,4 @@ export function excluirConta() {
     .should('be.visible');
 
   cy.get('[data-qa="continue-button"]').click();
-}
-
-export function realizarLogin(usuario) {
-  cy.contains('a', 'Signup / Login')
-    .should('be.visible')
-    .click();
-
-  cy.contains('h2', 'Login to your account')
-    .should('be.visible');
-
-  cy.get('[data-qa="login-email"]')
-    .type(usuario.email);
-
-  cy.get('[data-qa="login-password"]')
-    .type(usuario.senha, { log: false });
-
-  cy.get('[data-qa="login-button"]')
-    .click();
-
-  cy.contains('a', `Logged in as ${usuario.nomeCompleto}`)
-    .should('be.visible');
-}
-
-export function realizarLogout() {
-  cy.contains('a', 'Logout')
-    .should('be.visible')
-    .click();
-
-  cy.url().should('include', '/login');
 }

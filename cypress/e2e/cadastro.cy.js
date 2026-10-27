@@ -1,68 +1,70 @@
 
 import { criarUsuario } from '../support/dados-usuario';
 
+import { acessarPaginaInicial } from '../support/navegacao';
+
 import {
-  acessarPaginaInicial,
   iniciarCadastro,
   preencherDadosCadastro,
   finalizarCadastro,
+  cadastrarUsuario,
   excluirConta
-} from '../support/automation-exercise';
+} from '../support/cadastro';
 
 describe('TC01 - Cadastro de usuário', () => {
 
   it('Deve cadastrar e excluir um usuário com sucesso', () => {
 
-    const usuario = criarUsuario();
+    cy.env(['SENHA_TESTE']).then(({ SENHA_TESTE }) => {
+      const usuario = criarUsuario(SENHA_TESTE);
 
-    acessarPaginaInicial();
+      acessarPaginaInicial();
 
-    iniciarCadastro(usuario);
+      cadastrarUsuario(usuario);
 
-    preencherDadosCadastro(usuario);
-
-    finalizarCadastro(usuario);
-
-    excluirConta();
+      excluirConta();
+    });
 
   });
+
+});
 
 describe('TC05 - Cadastro com e-mail existente', () => {
 
   it('Deve impedir cadastro com e-mail já registrado', () => {
 
-    const usuario = criarUsuario();
+    cy.env(['SENHA_TESTE']).then(({ SENHA_TESTE }) => {
+      const usuario = criarUsuario(SENHA_TESTE);
 
-    // Preparação: cadastrar o usuário
-    acessarPaginaInicial();
-    iniciarCadastro(usuario);
-    preencherDadosCadastro(usuario);
-    finalizarCadastro(usuario);
+      // Preparação: cadastrar o usuário
+      acessarPaginaInicial();
+      iniciarCadastro(usuario);
+      preencherDadosCadastro(usuario);
+      finalizarCadastro(usuario);
 
-    // Encerrar a sessão
-    cy.contains('a', 'Logout')
-      .should('be.visible')
-      .click();
+      // Encerrar a sessão
+      cy.contains('a', 'Logout')
+        .should('be.visible')
+        .click();
 
-    // Tentar cadastrar novamente com o mesmo e-mail
-    cy.contains('h2', 'New User Signup!')
-      .should('be.visible');
+      // Tentar cadastrar novamente com o mesmo e-mail
+      cy.contains('h2', 'New User Signup!')
+        .should('be.visible');
 
-    cy.get('[data-qa="signup-name"]')
-      .type(usuario.nomeCompleto);
+      cy.get('[data-qa="signup-name"]')
+        .type(usuario.nomeCompleto);
 
-    cy.get('[data-qa="signup-email"]')
-      .type(usuario.email);
+      cy.get('[data-qa="signup-email"]')
+        .type(usuario.email);
 
-    cy.get('[data-qa="signup-button"]')
-      .click();
+      cy.get('[data-qa="signup-button"]')
+        .click();
 
-    // Validar mensagem de e-mail já cadastrado
-    cy.contains('Email Address already exist!')
-      .should('be.visible');
+      // Validar mensagem de e-mail já cadastrado
+      cy.contains('Email Address already exist!')
+        .should('be.visible');
+    });
 
   });
-
-});
 
 });

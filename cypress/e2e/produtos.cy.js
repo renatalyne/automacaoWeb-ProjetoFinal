@@ -1,22 +1,19 @@
-
 import {
   acessarPaginaInicial
-} from '../support/automation-exercise';
+} from '../support/navegacao';
+
+import {
+  acessarPaginaProdutos
+} from '../support/produtos';
 
 describe('TC08 - Visualizar detalhes dos produtos', () => {
 
   it('Deve apresentar os detalhes de um produto', () => {
 
     acessarPaginaInicial();
+    acessarPaginaProdutos();
 
-    cy.contains('a', 'Products')
-      .should('be.visible')
-      .click();
-
-    cy.contains('h2', 'All Products')
-      .should('be.visible');
-
-    cy.get('.features_items .product-image-wrapper')
+      cy.get('.features_items .product-image-wrapper')
       .should('have.length.greaterThan', 0);
 
     cy.contains('a', 'View Product')
@@ -40,30 +37,24 @@ describe('TC09 - Pesquisar produtos', () => {
 
   it('Deve pesquisar produtos e apresentar os resultados', () => {
 
-    const produto = 'Top';
+   const produto = 'Top';
 
-    acessarPaginaInicial();
+acessarPaginaInicial();
+acessarPaginaProdutos();
 
-    cy.contains('a', 'Products')
-      .should('be.visible')
-      .click();
+// Informar o produto que será pesquisado
+cy.get('#search_product')
+  .should('be.visible')
+  .type(produto);
 
-    cy.contains('h2', 'All Products')
-      .should('be.visible');
+// Executar a pesquisa
+cy.get('#submit_search').click();
 
-    cy.get('#search_product')
-      .should('be.visible')
-      .type(produto);
+cy.contains('h2', 'Searched Products')
+  .should('be.visible');
 
-    cy.get('#submit_search').click();
-
-    cy.contains('h2', 'Searched Products')
-      .should('be.visible');
-
-    cy.get('.features_items .product-image-wrapper')
-      .should('have.length.greaterThan', 0);
-
-
+cy.get('.features_items .product-image-wrapper')
+  .should('have.length.greaterThan', 0);
 
 
 
@@ -75,15 +66,20 @@ cy.get('.features_items .productinfo p')
     );
 
     // Verificar que existem produtos encontrados
-    expect(nomes.length).to.be.greaterThan(0);
+    expect(
+  nomes.length,
+  'A pesquisa deve retornar pelo menos um produto'
+).to.be.greaterThan(0);
 
     // Verificar que pelo menos um produto corresponde à pesquisa
     const produtosCorrespondentes = nomes.filter((nome) =>
       nome.toLowerCase().includes(produto.toLowerCase())
     );
 
-    expect(produtosCorrespondentes.length)
-      .to.be.greaterThan(0);
+expect(
+  produtosCorrespondentes.length,
+  `A pesquisa pelo termo "${produto}" deve retornar pelo menos um produto correspondente`
+).to.be.greaterThan(0);
 
   });
 

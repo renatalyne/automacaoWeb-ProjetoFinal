@@ -1,40 +1,41 @@
 
 import { criarUsuario } from '../support/dados-usuario';
 
+import { acessarPaginaInicial } from '../support/navegacao';
+
 import {
-  acessarPaginaInicial,
-  iniciarCadastro,
-  preencherDadosCadastro,
-  finalizarCadastro,
-  realizarLogout,
-  realizarLogin,
+  cadastrarUsuario,
   excluirConta
-} from '../support/automation-exercise';
+} from '../support/cadastro';
+
+import {
+  realizarLogin,
+  realizarLoginInvalido,
+  realizarLogout
+} from '../support/autenticacao';
 
 describe('TC02 - Login com credenciais válidas', () => {
 
   it('Deve realizar login com sucesso', () => {
 
-    const usuario = criarUsuario();
+    cy.env(['SENHA_TESTE']).then(({ SENHA_TESTE }) => {
+      const usuario = criarUsuario(SENHA_TESTE);
 
-    // Preparação: cadastrar usuário
-    acessarPaginaInicial();
-    iniciarCadastro(usuario);
-    preencherDadosCadastro(usuario);
-    finalizarCadastro(usuario);
+      // Preparação: cadastrar usuário
+      acessarPaginaInicial();
+      cadastrarUsuario(usuario);
 
-    // Encerrar a sessão
-    realizarLogout();
+      // Encerrar a sessão
+      realizarLogout();
 
-    // Executar o login
-    realizarLogin(usuario);
+      // Executar o login
+      realizarLogin(usuario);
 
-    // Limpeza: excluir usuário
-    excluirConta();
+      // Limpeza: excluir usuário
+      excluirConta();
+    });
 
   });
-
-  
 
 });
 
@@ -42,53 +43,43 @@ describe('TC03 - Login com credenciais inválidas', () => {
 
   it('Deve apresentar erro ao informar credenciais inválidas', () => {
 
-    cy.visit('https://automationexercise.com');
+    acessarPaginaInicial();
 
-    cy.contains('a', 'Signup / Login')
-      .should('be.visible')
-      .click();
+    const emailInvalido = `invalido${Date.now()}@example.com`;
+    const senhaInvalida = 'SenhaInvalida123';
 
-    cy.contains('h2', 'Login to your account')
-      .should('be.visible');
-
-    cy.get('[data-qa="login-email"]')
-      .type(`invalido${Date.now()}@example.com`);
-
-    cy.get('[data-qa="login-password"]')
-      .type('SenhaInvalida123', { log: false });
-
-    cy.get('[data-qa="login-button"]')
-      .click();
-
-    cy.contains('Your email or password is incorrect!')
-      .should('be.visible');
+    realizarLoginInvalido(emailInvalido, senhaInvalida);
 
   });
+
+});
 
 describe('TC04 - Logout de usuário', () => {
 
   it('Deve realizar logout com sucesso', () => {
 
-    const usuario = criarUsuario();
+    cy.env(['SENHA_TESTE']).then(({ SENHA_TESTE }) => {
+      const usuario = criarUsuario(SENHA_TESTE);
 
-    // Preparação: criar usuário autenticado
-    acessarPaginaInicial();
-    iniciarCadastro(usuario);
-    preencherDadosCadastro(usuario);
-    finalizarCadastro(usuario);
+      // Preparação: criar usuário autenticado
+      acessarPaginaInicial();
+      cadastrarUsuario(usuario);
 
-    // Executar logout
-    realizarLogout();
+      // Executar logout
+      realizarLogout();
 
-    // Validar retorno à tela de login
-    cy.contains('h2', 'Login to your account')
-      .should('be.visible');
+      // Validar retorno à tela de login
+      cy.contains('h2', 'Login to your account')
+        .should('be.visible');
 
-    cy.contains('a', `Logged in as ${usuario.nomeCompleto}`)
-      .should('not.exist');
+      cy.contains('a', `Logged in as ${usuario.nomeCompleto}`)
+        .should('not.exist');
+
+      // Limpeza: autenticar novamente para excluir a conta
+      realizarLogin(usuario);
+      excluirConta();
+    });
 
   });
-
-});
 
 });
